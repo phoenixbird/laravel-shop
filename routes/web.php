@@ -16,5 +16,7 @@
 //});
 
 Route::get('/','PagesController@root')->name('root');
-Auth::routes();
+//Route::get('/','PagesController@root')->name('root')->middleware('verified');//测试邮箱验证功能
+
+Auth::routes(['verify'=>true]);
 
