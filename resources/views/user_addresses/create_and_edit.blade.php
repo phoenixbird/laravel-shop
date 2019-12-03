@@ -29,7 +29,7 @@
                         <form class="form-horizontal" role="form" action="{{ route('user_addresses.update', ['user_address' => $address->id]) }}" method="post">
                             {{ method_field('PUT') }}
                         @else
-                        <form class="form-horizontal" role="form" action="{{ route('user_addresses.store') }}" >
+                        <form class="form-horizontal" role="form" action="{{ route('user_addresses.store') }}"  method="post">
                         @endif
                             <!-- 引入 csrf token 字段 -->
                             {{csrf_field()}}
