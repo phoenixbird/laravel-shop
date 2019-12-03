@@ -30,6 +30,7 @@ Vue.component('example-component', require('./components/ExampleComponent.vue').
 //此处引入Vue之后引入
 require('./components/SelectDistrict');
 require('./components/UserAddressesCreateAndEdit');
+require('sweetalert');
 
 const app = new Vue({
     el: '#app'

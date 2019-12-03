@@ -20,5 +20,7 @@
     </div>
     <!-- js 脚本-->
     <script src="{{mix('js/app.js')}}"></script>
+    <!--引入sweetalert-->
+    @yield('scriptsAfterJs')
 </body>
 </html>
