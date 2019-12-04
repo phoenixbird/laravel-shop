@@ -52,7 +52,7 @@ class ProductsController extends AdminController
 
     /**
      * Make a show builder.
-     *
+     * 此方法可以删除 无用
      * @param mixed $id
      * @return Show
      */

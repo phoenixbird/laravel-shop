@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Product extends Model
 {
@@ -18,5 +19,14 @@ class Product extends Model
     public function skus()
     {
         return $this->hasMany(ProductSku::class);
+    }
+
+    //图片路径转绝对路径
+    public function getImageUrlAttribute(){
+        //如果image字段本身就是完整的url就直接访问
+        if(Str::startsWith($this->attributes['image'],['http://','https://'])){
+            return $this->attributes['image'];
+        }
+        return \Storage::disk('public')->url($this->attributes['image']);
     }
 }
