@@ -16,4 +16,11 @@ Route::group([
 
     $router->get('products', 'ProductsController@index');
 
+    //显示上架商品列表
+    $router->get('products/create', 'ProductsController@create');
+    $router->post('products', 'ProductsController@store');
+    //编辑商品
+    $router->get('products/{id}/edit', 'ProductsController@edit');
+    $router->put('products/{id}', 'ProductsController@update');
+
 });
