@@ -11,6 +11,7 @@
 |
 */
 
+//laravel 路由解析是按照顺序的 products/{product}/favorite 和products/{product} 谁在前解析谁
 //Route::get('/', function () {
 //    return view('welcome');
 //});
@@ -32,6 +33,7 @@ Route::group(['middleware'=>['auth','verified']],function (){
     //收藏相关路由
     Route::post('products/{product}/favorite', 'ProductsController@favor')->name('products.favor');
     Route::delete('products/{product}/favorite', 'ProductsController@disfavor')->name('products.disfavor');
+    Route::get('products/favorites', 'ProductsController@favorites')->name('products.favorites');
 });
 
 Route::redirect('/', '/products')->name('root');

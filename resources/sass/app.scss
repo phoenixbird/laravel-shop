@@ -54,8 +54,8 @@ body {
   }
 }
 
-/* 商品列表页面美化*/
-.products-index-page {
+/* 商品列表页面美化以及商品收藏列表 */
+.products-index-page,.products-favorites-page {
   .pagination {
     margin-right: 5px;
   }
