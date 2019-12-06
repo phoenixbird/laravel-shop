@@ -77,4 +77,11 @@ class OrdersController extends Controller
             ->paginate();
         return view('orders.index', ['orders' => $orders]);
     }
+
+    //显示订单详情页
+    public function show(Order $order,Request $request){
+        //校验用户查看自己的订单
+        $this->authorize('own', $order);
+        return view('orders.show',['order'=>$order->load(['items.productSku', 'items.product'])]);
+    }
 }
