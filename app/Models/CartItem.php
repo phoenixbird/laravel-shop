@@ -14,6 +14,7 @@ class CartItem extends Model
         return $this->belongsTo(User::class);
     }
 
+    //关联商品SKU
     public function productSku(){
         return $this->belongsTo(ProductSku::class);
     }
