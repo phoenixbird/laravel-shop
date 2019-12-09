@@ -44,17 +44,25 @@ Route::group(['middleware'=>['auth','verified']],function (){
     Route::post('orders', 'OrdersController@store')->name('orders.store');
     Route::get('orders', 'OrdersController@index')->name('orders.index');
     Route::get('orders/{order}', 'OrdersController@show')->name('orders.show');
+
+    //支付相关
+    Route::get('payment/{order}/alipay','PaymentController@payByAlipay')->name('payment.alipay');
+    Route::get('payment/alipay/return','PaymentController@alipayReturn')->name('payment.alipay.return');
+
 });
 
 Route::redirect('/', '/products')->name('root');
 Route::get('products', 'ProductsController@index')->name('products.index');
 
 Route::get('products/{product}','ProductsController@show')->name('products.show');
+//支付宝支付服务端回调
+Route::post('payment/alipay/notify','PaymentController@alipayNotify')->name('payment.alipay.notify');
 
-Route::get('alipay', function() {
-    return app('alipay')->web([
-        'out_trade_no' => time(),
-        'total_amount' => '1',
-        'subject' => 'test subject - 测试',
-    ]);
-});
+//测试支付路由
+//Route::get('alipay', function() {
+//    return app('alipay')->web([
+//        'out_trade_no' => time(),
+//        'total_amount' => '1',
+//        'subject' => 'test subject - 测试',
+//    ]);
+//});
