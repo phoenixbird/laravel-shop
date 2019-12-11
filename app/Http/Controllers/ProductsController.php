@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\InvalidRequestException;
+use App\Models\OrderItem;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
@@ -51,24 +52,37 @@ class ProductsController extends Controller
     }
 
     //商品详情页显示
-    public function show(Product $product,Request $request){
+    public function show(Product $product, Request $request)
+    {
         //判断商品是否已经上架，如果没上架抛出异常
-        if(!$product->on_sale){
+        if (!$product->on_sale) {
             throw new InvalidRequestException('商品为上架');
         }
-        $favored=false;
-        if($user=$request->user()){
+        $favored = false;
+        if ($user = $request->user()) {
             //从当前用户已收藏的商品中搜索ID为当前商品id的商品
             // boolval()函数把值转化为布尔值
-            $favored=boolval($user->favoriteProducts()->find($product->id));
+            $favored = boolval($user->favoriteProducts()->find($product->id));
         }
-        return view('products.show', ['product' => $product, 'favored' => $favored]);
+        $reviews = OrderItem::query()
+            ->with(['order.user', 'productSku'])
+            ->where('product_id', $product->id)
+            ->whereNotNull('reviewed_at')
+            ->orderBy('reviewed_at', 'desc')
+            ->limit(10)
+            ->get();
+        return view('products.show', [
+            'product' => $product,
+            'favored' => $favored,
+            'reviews' => $reviews,
+        ]);
     }
 
     //收藏商品
-    public function favor(Product $product,Request $request){
-        $user=$request->user();
-        if($user->favoriteProducts()->find($product->id)){
+    public function favor(Product $product, Request $request)
+    {
+        $user = $request->user();
+        if ($user->favoriteProducts()->find($product->id)) {
             return [];
         }
         //如果已经收藏则不做任何操作直接返回，否则通过 attach() 方法将当前用户和此商品关联起来
