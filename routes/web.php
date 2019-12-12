@@ -53,6 +53,9 @@ Route::group(['middleware'=>['auth','verified']],function (){
     //评论相关
     Route::get('orders/{order}/review','OrdersController@review')->name('orders.review.show');
     Route::post('orders/{order}/review','OrdersController@sendReview')->name('orders.review.store');
+
+    //退款申请
+    Route::post('orders/{order}/apply_refund','OrdersController@applyRefund')->name('orders.apply_refund');
 });
 
 Route::redirect('/', '/products')->name('root');
