@@ -4,6 +4,10 @@ return [
 
     'order_ttl' => 1800,//半小时不付款关闭订单
 
+//    'debug' => env('APP_DEBUG', true),
+//    'log' => env('APP_LOG', 'daily'),
+//    'log_level' => env('APP_LOG_LEVEL', 'debug'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Name
