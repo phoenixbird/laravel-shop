@@ -105,6 +105,7 @@ class Order extends Model
         return false;
     }
 
+    //生成退款单号
     public static function getAvailableRefundNo()
     {
         do {
@@ -113,5 +114,11 @@ class Order extends Model
         } while (self::query()->where('refund_no', $no)->exists());
 
         return $no;
+    }
+
+    //关联优惠券
+    public function couponCode()
+    {
+        return $this->belongsTo(CouponCode::class);
     }
 }
