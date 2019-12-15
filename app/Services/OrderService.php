@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Exceptions\CouponCodeUnavailableException;
+use App\Models\CouponCode;
 use App\Models\User;
 use App\Models\UserAddress;
 use App\Models\Order;
@@ -12,13 +14,17 @@ use Carbon\Carbon;
 
 class OrderService
 {
-    public function store(User $user, UserAddress $address, $remark, $items)
+    public function store(User $user, UserAddress $address, $remark, $items,CouponCode $coupon=null)
     {
-// 开启一个数据库事务
-        $order = \DB::transaction(function () use ($user, $address, $remark, $items) {
-// 更新此地址的最后使用时间
+        //如果传入了优惠券,先检查是否可以用
+        if($coupon){
+            $coupon->checkAvailable();
+        }
+        // 开启一个数据库事务
+        $order = \DB::transaction(function () use ($user, $address, $remark, $items,$coupon) {
+            // 更新此地址的最后使用时间
             $address->update(['last_used_at' => Carbon::now()]);
-// 创建一个订单
+            // 创建一个订单
             $order = new Order([
                 'address' => [ // 将地址信息放入订单中
                     'address' => $address->full_address,
@@ -29,16 +35,16 @@ class OrderService
                 'remark' => $remark,
                 'total_amount' => 0,
             ]);
-// 订单关联到当前用户
+            // 订单关联到当前用户
             $order->user()->associate($user);
-// 写入数据库
+            // 写入数据库
             $order->save();
 
             $totalAmount = 0;
-// 遍历用户提交的 SKU
+            // 遍历用户提交的 SKU
             foreach ($items as $data) {
                 $sku = ProductSku::find($data['sku_id']);
-// 创建一个 OrderItem 并直接与当前订单关联
+                // 创建一个 OrderItem 并直接与当前订单关联
                 $item = $order->items()->make([
                     'amount' => $data['amount'],
                     'price' => $sku->price,
@@ -51,17 +57,25 @@ class OrderService
                     throw new InvalidRequestException('该商品库存不足');
                 }
             }
-// 更新订单总金额
+            if($coupon){
+                $coupon->checkAvailable($totalAmount);
+                $totalAmount=$coupon->getAdjustedPrice($totalAmount);
+                $order->couponCode()->associate($coupon);
+                if($coupon->changeUsed()<=0){
+                    throw new CouponCodeUnavailableException("优惠券用完了");
+                }
+            }
+            // 更新订单总金额
             $order->update(['total_amount' => $totalAmount]);
 
-// 将下单的商品从购物车中移除
+            // 将下单的商品从购物车中移除
             $skuIds = collect($items)->pluck('sku_id')->all();
             app(CartService::class)->remove($skuIds);
 
             return $order;
         });
 
-// 这里我们直接使用 dispatch 函数
+        // 这里我们直接使用 dispatch 函数
         dispatch(new CloseOrder($order, config('app.order_ttl')));
 
         return $order;
