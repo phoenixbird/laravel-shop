@@ -6,6 +6,7 @@ use App\Exceptions\InvalidRequestException;
 use App\Models\OrderItem;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use App\Models\Category;
 
 class ProductsController extends Controller
 {
@@ -28,6 +29,19 @@ class ProductsController extends Controller
             });
         }
 
+        //如果传入有category_id字段，并且在数据库中有对应的类目
+        if($request->input('category_id') &&
+        $category=Category::find($request->input('category_id'))){
+            if($category->is_directory){
+                //如果这个类目是父类目则筛选出此类目下所有的商品
+                $builder->whereHas('category',function ($query)use ($category){
+                    $query->where('path','like',$category->path.$category->id.'-%');
+                });
+            }else{
+                $builder->where('category_id', $category->id);
+            }
+        }
+
         //判断是否提交order参数，如果有就赋值给$order变量,$order参数用来控制商品排序规则
         if ($order = $request->input('order', '')) {
             // 是否是以 _asc 或者 _desc 结尾
@@ -48,6 +62,7 @@ class ProductsController extends Controller
                 'search' => $search,
                 'order' => $order,
             ],
+            'category' => $category ?? null,
         ]);
     }
 
