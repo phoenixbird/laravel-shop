@@ -4,6 +4,7 @@
 
 use App\Models\Product;
 use Faker\Generator as Faker;
+use App\Models\Category;
 
 $factory->define(Product::class, function (Faker $faker) {
     $image = $faker->randomElement([
@@ -19,14 +20,19 @@ $factory->define(Product::class, function (Faker $faker) {
         "https://cdn.learnku.com/uploads/images/201806/01/5320/pa7DrV43Mw.jpg",
     ]);
 
+    //从数据库中随机取出一个类目
+    $category = Category::query()->where('is_directory', false)
+        ->inRandomOrder()
+        ->first();
     return [
-        'title'        => $faker->word,
-        'description'  => $faker->sentence,
-        'image'        => $image,
-        'on_sale'      => true,
-        'rating'       => $faker->numberBetween(0, 5),
-        'sold_count'   => 0,
+        'title' => $faker->word,
+        'description' => $faker->sentence,
+        'image' => $image,
+        'on_sale' => true,
+        'rating' => $faker->numberBetween(0, 5),
+        'sold_count' => 0,
         'review_count' => 0,
-        'price'        => 0,
+        'price' => 0,
+        'category_id' => $category ? $category->id : null,
     ];
 });
