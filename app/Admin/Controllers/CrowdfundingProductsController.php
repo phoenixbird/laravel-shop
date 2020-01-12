@@ -91,11 +91,12 @@ class CrowdfundingProductsController extends AdminController
             }
         })->ajax('/admin/api/categories?is_directory=0');
         $form->image('image', '封面图片')->rules('required|image');
-        $form->editor('description', '商品描述')->rules('required');
+        $form->quill('description', '商品描述')->rules('required');
         $form->radio('on_sale', '上架')->options(['1' => '是', '0' => '否'])->default('0');
         // 添加众筹相关字段
         $form->text('crowdfunding.target_amount', '众筹目标金额')->rules('required|numeric|min:0.01');
         $form->datetime('crowdfunding.end_at', '众筹结束时间')->rules('required|date');
+
         $form->hasMany('skus', '商品 SKU', function (Form\NestedForm $form) {
             $form->text('title', 'SKU 名称')->rules('required');
             $form->text('description', 'SKU 描述')->rules('required');
@@ -103,7 +104,8 @@ class CrowdfundingProductsController extends AdminController
             $form->text('stock', '剩余库存')->rules('required|integer|min:0');
         });
         $form->saving(function (Form $form) {
-            $form->model()->price = collect($form->input('skus'))->where(Form::REMOVE_FLAG_NAME, 0)->min('price');
+            $form->model()->price = collect($form->input('skus'))
+                ->where(Form::REMOVE_FLAG_NAME, 0)->min('price');
         });
 
         return $form;
