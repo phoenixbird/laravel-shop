@@ -20,6 +20,8 @@ class UserAddress extends Model
 
     protected $dates = ['last_used_at'];
 
+    protected $appends = ['full_address'];
+
     //与User模型关联 一对多 一个User可以有多个UserAddress
     public function user()
     {

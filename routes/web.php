@@ -59,6 +59,9 @@ Route::group(['middleware'=>['auth','verified']],function (){
 
     //优惠券校验
     Route::get('coupon_codes/{code}', 'CouponCodesController@show')->name('coupon_codes.show');
+
+    //众筹下单
+    Route::post('crowdfunding_orders','OrdersController@crowdfunding')->name('crowdfunding_orders.store');
 });
 
 Route::redirect('/', '/products')->name('root');
