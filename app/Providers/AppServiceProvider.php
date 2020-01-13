@@ -21,7 +21,8 @@ class AppServiceProvider extends ServiceProvider
             $config=config('pay.alipay');
             $config['return_url']=route('payment.alipay.return');//前端回调
 //            $config['notify_url']=route('payment.alipay.notify');//服务端回调
-            $config['notify_url']='http://requestbin.net/r/19x2fvd1';//服务端回调例子演示
+//            $config['notify_url']='http://requestbin.net/r/19x2fvd1';//服务端回调例子演示
+            $config['notify_url'] = ngrok_url('payment.alipay.notify');
             //判断当前项目的运行环境
             if(app()->environment()!=='production'){
                 $config['mode']='dev';
@@ -34,6 +35,7 @@ class AppServiceProvider extends ServiceProvider
         });
         $this->app->singleton('wechat_pay',function (){
             $config=config('pay.wechat');
+            $config['notify_url'] = ngrok_url('payment.wechat.notify');
             if(app()->environment()!=='production'){
                 $config['log']['level']=Logger::DEBUG;
             }else{
