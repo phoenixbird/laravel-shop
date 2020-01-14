@@ -26,6 +26,7 @@ $factory->define(Product::class, function (Faker $faker) {
         ->first();
     return [
         'title' => $faker->word,
+        'long_title'   => $faker->sentence,
         'description' => $faker->sentence,
         'image' => $image,
         'on_sale' => true,
