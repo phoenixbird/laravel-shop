@@ -13,7 +13,7 @@
         "encore/laravel-admin": "1.7.7",
         "fideloper/proxy": "^4.0",
         "jxlwqq/quill": "^1.0",
-        "laravel/framework": "6.0.*",
+        "laravel/framework": "6.18.*",
         "laravel/tinker": "^1.0",
         "overtrue/easy-sms": "^1.1",
         "overtrue/laravel-lang": "^3.0",
